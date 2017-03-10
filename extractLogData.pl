@@ -5,7 +5,8 @@ use JSON;
 use Data::Dumper;
 
 
-my $gte = 1488754800000;
+#my $gte = 1488754800000;
+my $gte =  @148872480000;
 my $lte = 1;
 
 while ($lte <= ($gte + 360000)){
@@ -46,8 +47,23 @@ curl -XGET 'http://10.1.20.44:9200/*bankbridgeservice*/_search?pretty&filter_pat
 };
 
 my $data = decode_json ` $cmd `;
-print Dumper($data) ;
 
+foreach my $hit (@{$data->{'hits'}->{'hits'}}) {
+
+if ($hit->{'_source'}->{'source'} =~ /bankbridge-service.log/i) {
+    open(my $fd, ">>/tmp/bankbridge-service.txt");
+    print $fd $hit->{'_source'}->{'message'} . "\n" ;
+    close $fd;
+}
+
+if ($hit->{'_source'}->{'source'} =~ /warehouse.log/i) {
+    open(my $fd, ">>/tmp/warehouse.txt");
+    print $fd $hit->{'_source'}->{'message'} . "\n" ;
+    close $fd;
+}
+
+
+}
 
 
 }
