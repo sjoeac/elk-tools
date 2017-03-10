@@ -4,13 +4,13 @@ use strict;
 use JSON;
 use Data::Dumper;
 
-
-#my $gte = 1488754800000;
-my $gte =  @148872480000;
+my $gte =  1488724800000;
 my $lte = 1;
+my $home = '/LogBackups/s3_backup';
 
-while ($lte <= ($gte + 360000)){
+while ($lte <= (1488825800000)){
 $lte = $gte + 10000;
+
 my $cmd = qq{ 
 
 curl -XGET 'http://10.1.20.44:9200/*bankbridgeservice*/_search?pretty&filter_path=hits.hits._source' -d  '{
