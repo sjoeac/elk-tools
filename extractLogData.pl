@@ -4,12 +4,13 @@ use strict;
 use JSON;
 use Data::Dumper;
 
-my $gte =  1488724800000;
-my $lte = 1;
-my $home = '/LogBackups/s3_backup';
+my $gte =  1488738000000;
+my $lte =  1488738010000;
+my $home = '/LogBackups/s4_backup';
 
 while ($lte <= (1488825800000)){
-$lte = $gte + 10000;
+$gte = $lte;
+$lte = $gte + 1000;
 
 my $cmd = qq{ 
 
@@ -46,24 +47,25 @@ curl -XGET 'http://10.1.20.44:9200/*bankbridgeservice*/_search?pretty&filter_pat
 
 };
 
+
 my $data = decode_json ` $cmd `;
 
 foreach my $hit (@{$data->{'hits'}->{'hits'}}) {
 
 if ($hit->{'_source'}->{'source'} =~ /bankbridge-service.log/i) {
-    open(my $fd, ">>/tmp/bankbridge-service.txt");
+    open(my $fd, ">> $home/bankbridge-service_mar6.txt") or die $!;
+    print localtime() . $hit->{'_source'}->{'source'} . "\n" ;
     print $fd $hit->{'_source'}->{'message'} . "\n" ;
     close $fd;
 }
 
-if ($hit->{'_source'}->{'source'} =~ /warehouse.log/i) {
-    open(my $fd, ">>/tmp/warehouse.txt");
+if ($hit->{'_source'}->{'source'} =~ /warehouse/i) {
+    open(my $fd, ">> $home/warehouse_mar6.txt") or die $1;
+    print localtime() . $hit->{'_source'}->{'source'} . "\n" ;
     print $fd $hit->{'_source'}->{'message'} . "\n" ;
     close $fd;
 }
 
-
+}
 }
 
-
-}
